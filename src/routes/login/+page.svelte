@@ -1,44 +1,103 @@
-<!-- src/routes/login.svelte -->
 <script>
-    let email = '';
-    let password = '';
-  
-    async function login() {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-  
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem('token', data.token);
-        // Redirect to dashboard
-        window.location.href = '/dashboard';
-      } else {
-        alert('Login failed');
-      }
+  import { onMount } from 'svelte';
+  import '@fortawesome/fontawesome-free/css/all.min.css';
+  import "./style.css"
+
+  let email = "";
+  let password = "";
+  let name = "";
+  let isSignUpActive = false;
+
+  const handleSignUpClick = () => {
+    isSignUpActive = true;
+  };
+
+  const handleSignInClick = () => {
+    isSignUpActive = false;
+  };
+
+  async function login() {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
+      // Redirect to dashboard
+      window.location.href = "/dashboard";
+    } else {
+      alert("Login failed");
     }
-  </script>
-  
-  <main class="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
-    <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
-      <h1 class="text-2xl font-bold text-center text-gray-900 dark:text-white">Welcome Back!</h1>
-      <form on:submit|preventDefault={login} class="space-y-6">
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Email</label>
-          <input type="email" id="email" bind:value={email} placeholder="Enter your email" required class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-300 dark:placeholder-gray-400 dark:border-gray-600" />
+  }
+
+  async function signup() {
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
+      // Redirect to dashboard
+      window.location.href = "/dashboard";
+    } else {
+      alert("Signup failed");
+    }
+  }
+</script>
+
+
+<main class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-900 ">
+  <div class={`container ${isSignUpActive ? 'right-panel-active' : ''}`} id="container">
+    <div class="form-container sign-up-container">
+      <form on:submit|preventDefault={signup} class="space-y-6 form-auth">
+        <h1 class="h-auth">Create Account</h1>
+        <div class="social-container">
+          <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+          <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
         </div>
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Password</label>
-          <input type="password" id="password" bind:value={password} placeholder="Enter your password" required class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-300 dark:placeholder-gray-400 dark:border-gray-600" />
-        </div>
-        <button type="submit" class="w-full px-3 py-2 border rounded-md shadow-sm text-white dark:placeholder-gray-400 dark:border-gray-600 bg-blue-600 hover:bg-red-500">Login</button>
+        <span class="span-auth">or use your email for registration</span>
+        <input class="input-auth" type="text" bind:value={name} placeholder="Name" required />
+        <input class="input-auth" type="email" bind:value={email} placeholder="Email" required />
+        <input class="input-auth" type="password" bind:value={password} placeholder="Password" required />
+        <br>
+        <button type="submit" class='sign-btn b-auth'>Sign Up</button>
       </form>
-      <footer class="text-sm text-center text-gray-600 dark:text-gray-400">
-        Don't have an account? <a href="/register" class="text-primary-600 hover:underline dark:text-primary-400">Register now</a>
-      </footer>
     </div>
-  </main>
-  
-  
+    <div class="form-container sign-in-container">
+      <form on:submit|preventDefault={login} class="space-y-6 form-auth">
+        <h1 class="h-auth">Sign in</h1>
+        <div class="social-container">
+          <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+          <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <span class="span-auth">or use your account</span>
+        <input class="input-auth" type="email" bind:value={email} placeholder="Email" required />
+        <input class="input-auth" type="password" bind:value={password} placeholder="Password" required />
+        <a href="#">Forgot your password?</a>
+        <button type="submit" class='sign-btn b-auth'>Sign In</button>
+      </form>
+    </div>
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1 class="h-auth">Welcome Back!</h1>
+          <p class="p-auth">To keep connected with us please login with your personal info</p>
+          <button class="ghost b-auth" on:click={handleSignInClick}>Sign In</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1 class="h-auth">Hello, Friend!</h1>
+          <p class="p-auth">Enter your personal details and start journey with us</p>
+          <button class="ghost b-auth" on:click={handleSignUpClick}>Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
