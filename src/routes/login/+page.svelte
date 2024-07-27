@@ -20,7 +20,7 @@
       }
     }
   </script>
-  
+
   <main class="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
     <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
       <h1 class="text-2xl font-bold text-center text-gray-900 dark:text-white">Welcome Back!</h1>
