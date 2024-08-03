@@ -1,7 +1,9 @@
 <script lang="ts">
-  import { projectDetails, tokenParameters } from '$lib/stores/projectstore';
+  import { projectDetails, tokenParameters,confirmedDataList } from '$lib/stores/projectstore';
   import { onDestroy } from 'svelte';
+  import { goto } from '$app/navigation';
   import axios from 'axios';
+  import { list } from 'postcss';
 
   // Define the types for the data
   interface ProjectData {
@@ -16,6 +18,8 @@
     totalSupply: number; // Ensure this matches the expected type
     additionalFeatures: string;
   }
+
+  type ConfirmedData = ProjectData & TokenData;
 
   let projectData: ProjectData = {
     projectName: '',
@@ -54,7 +58,12 @@
         totalSupply: tokenData.totalSupply, // Ensure this is a number
         additionalFeatures: tokenData.additionalFeatures
       });
+
       console.log('Token created successfully:', response.data);
+
+      confirmedDataList.update((list) => [...list, { ...projectData, ...tokenData }]);
+
+      goto('/dashboard');
       // Optionally navigate or provide user feedback
     } catch (error) {
       console.error('Error creating token:', error);

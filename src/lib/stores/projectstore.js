@@ -12,4 +12,4 @@ export const tokenParameters = writable({
   totalSupply: '',
   additionalFeatures: '',
 });
-export const finalDetails = writable({});
+export const confirmedDataList = writable([]);

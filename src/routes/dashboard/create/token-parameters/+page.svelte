@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import axios from "axios";
+  import {tokenParameters} from '$lib/stores/projectstore';
 
   let tokenName = "";
   let tokenSymbol = "";
@@ -32,6 +33,7 @@
       );
 
       console.log("Token parameters defined successfully:", response.data);
+      tokenParameters.set({ tokenName, tokenSymbol, totalSupply, additionalFeatures });
       goto("/dashboard/create/confirmation");
     } catch (error) {
       console.error("Error defining token parameters:", error);

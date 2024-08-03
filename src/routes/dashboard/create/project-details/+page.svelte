@@ -1,6 +1,6 @@
 <script>
   import { goto } from "$app/navigation";
-
+  import { projectDetails } from "$lib/stores/projectstore";
   // Replace with the actual builder ID if necessary
   const builderId = 1;
 
@@ -27,6 +27,7 @@
         throw new Error("Failed to submit project details");
       }
 
+      projectDetails.set({ projectName, projectDescription, projectLocation });
       // Navigate to the next page after a successful submission
       goto("/dashboard/create/token-parameters");
     } catch (error) {
