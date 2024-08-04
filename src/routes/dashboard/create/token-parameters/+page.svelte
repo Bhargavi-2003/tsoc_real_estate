@@ -1,43 +1,32 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import axios from "axios";
-  import {tokenParameters} from '$lib/stores/projectstore';
+  import { tokenParameters } from "$lib/stores/projectstore";
 
   let tokenName = "";
   let tokenSymbol = "";
   let totalSupply = ""; // This is initially a string
   let additionalFeatures = "";
 
-  async function submitTokenParameters() {
-    try {
-      // Convert totalSupply to a number
-      const totalSupplyNumber = parseInt(totalSupply, 10);
+  function submitTokenParameters() {
+    // Convert totalSupply to a number
+    const totalSupplyNumber = parseInt(totalSupply, 10);
 
-      // Ensure totalSupply is a number, fallback to 0 if parsing fails
-      if (isNaN(totalSupplyNumber)) {
-        console.error("Total Supply must be a number");
-        return;
-      }
-
-      // Send data to the backend
-      const response = await axios.post(
-        "http://localhost:3000/api/token/define",
-        {
-          builderId: 1, // Replace with actual builderId if needed
-          projectId: 1, // Replace with actual projectId if needed
-          tokenName,
-          tokenSymbol,
-          totalSupply: totalSupplyNumber, // Pass as number
-          additionalFeatures,
-        },
-      );
-
-      console.log("Token parameters defined successfully:", response.data);
-      tokenParameters.set({ tokenName, tokenSymbol, totalSupply, additionalFeatures });
-      goto("/dashboard/create/confirmation");
-    } catch (error) {
-      console.error("Error defining token parameters:", error);
+    // Ensure totalSupply is a number, fallback to 0 if parsing fails
+    if (isNaN(totalSupplyNumber)) {
+      console.error("Total Supply must be a number");
+      return;
     }
+
+    // Set token parameters in the store
+    tokenParameters.set({
+      tokenName,
+      tokenSymbol,
+      totalSupply: totalSupplyNumber,
+      additionalFeatures,
+    });
+
+    // Navigate to confirmation page
+    goto("/dashboard/create/confirmation");
   }
 </script>
 

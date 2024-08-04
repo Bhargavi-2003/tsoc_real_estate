@@ -1,100 +1,206 @@
 <script lang="ts">
-  import {confirmedDataList} from '$lib/stores/projectstore.js';
-  import {onDestroy} from 'svelte';
-  import {onMount} from 'svelte';
-    //export let data;
-    // let confirmedData =[];
-    interface ProjectData {
-    projectName: string;
-    projectDescription: string;
-    projectLocation: string;
+  import { onMount } from "svelte";
+  import axios from "axios";
+
+  interface ProjectData {
+    id: number;
+    name: string;
+    description: string;
+    location: string;
+    builderId: number;
+    status: string;
   }
 
   interface TokenData {
+    tokenId: number;
     tokenName: string;
     tokenSymbol: string;
     totalSupply: number;
-    additionalFeatures: string;
+    details: string;
   }
 
   type ConfirmedData = ProjectData & TokenData;
 
   let confirmedTokens: ConfirmedData[] = [];
+  let loading = true;
+  let error: string | null = null;
 
-  // Subscribe to the store to get the confirmed tokens
-  confirmedDataList.subscribe((tokens) => {
-    confirmedTokens = tokens;
+  async function fetchProjectDetails(): Promise<ProjectData[]> {
+    try {
+      const response = await axios.get("http://localhost:3000/api/project", {
+        params: { builderId: 1 },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching project details:", error);
+      throw error;
+    }
+  }
+
+  async function fetchTokenDetails(): Promise<TokenData[]> {
+    try {
+      const response = await axios.get("http://localhost:3000/api/token/manage", {
+        params: { builderId: 1 },
+      });
+      return response.data.tokens;
+    } catch (error) {
+      console.error("Error fetching token details:", error);
+      throw error;
+    }
+  }
+
+  onMount(async () => {
+    loading = true;
+    try {
+      const [projectDetails, tokenDetails] = await Promise.all([
+        fetchProjectDetails(),
+        fetchTokenDetails(),
+      ]);
+
+      confirmedTokens = projectDetails.map((project, index: number) => ({
+        ...project,
+        ...(tokenDetails[index] || {}),
+      }));
+    } catch (error) {
+      error = "Failed to load data";
+    } finally {
+      loading = false;
+    }
   });
+</script>
 
-  // const unsubscribe = confirmedDataList.subscribe(value => {
-  //   confirmedData = value;
-  // });
-
-  // onDestroy(() =>{
-  //   unsubscribe();
-  // })
-
-  </script>
-  
-  <div class="min-h-screen bg-gray-100 flex">
-    <!-- Sidebar -->
-    <div class="w-64 bg-white shadow-md">
-      <div class="p-4">
-        <h1 class="text-2xl font-semibold">Dashboard</h1>
-      </div>
-      <nav class="mt-4">
-        <a href="/dashboard" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Home</a>
-        <a href="/dashboard/create/project-details" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Create Token</a>
-        <a href="/dashboard/manage" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Manage Tokens</a>
-      </nav>
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1 class="text-2xl font-semibold">Dashboard</h1>
     </div>
-  
-    <!-- Main Content -->
-    <div class="flex-1 p-8">
-      <h2 class="text-3xl font-semibold mb-4">Welcome to Dashboard!</h2>
-      <!-- {#if confirmedData.length > 0} -->
-      <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-        <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item">Home</a>
+      <a href="/dashboard/create/project-details" class="nav-item">Create Token</a>
+      <a href="/dashboard/manage" class="nav-item">Manage Tokens</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <h2 class="page-title">Welcome to Dashboard!</h2>
+    {#if loading}
+      <p class="loading-message">Loading data...</p>
+    {:else if error}
+      <p class="error-message">{error}</p>
+    {:else}
+      <table class="data-table">
+        <thead>
           <tr>
-            <th class="py-3 px-6 text-left">Project Name</th>
-            <th class="py-3 px-6 text-left">Project Description</th>
-            <th class="py-3 px-6 text-left">Project Location</th>
-            <th class="py-3 px-6 text-left">Token Name</th>
-            <th class="py-3 px-6 text-left">Token Symbol</th>
-            <th class="py-3 px-6 text-left">Total Supply</th>
-            <th class="py-3 px-6 text-left">Additional Features</th>
+            <th>Project Name</th>
+            <th>Project Description</th>
+            <th>Project Location</th>
+            <th>Token Name</th>
+            <th>Token Symbol</th>
+            <th>Total Supply</th>
+            <th>Additional Features</th>
           </tr>
         </thead>
-        <tbody class="text-gray-600 text-sm font-light">
-          {#each confirmedTokens as data (data.tokenName)}
-            <tr class="border-b border-gray-200 hover:bg-gray-100">
-              <td class="py-3 px-6 text-left">{data.projectName}</td>
-              <td class="py-3 px-6 text-left">{data.projectDescription}</td>
-              <td class="py-3 px-6 text-left">{data.projectLocation}</td>
-              <td class="py-3 px-6 text-left">{data.tokenName}</td>
-              <td class="py-3 px-6 text-left">{data.tokenSymbol}</td>
-              <td class="py-3 px-6 text-left">{data.totalSupply}</td>
-              <td class="py-3 px-6 text-left">{data.additionalFeatures}</td>
+        <tbody>
+          {#each confirmedTokens as data (data.tokenId)}
+            <tr>
+              <td>{data.name}</td>
+              <td>{data.description}</td>
+              <td>{data.location}</td>
+              <td>{data.tokenName}</td>
+              <td>{data.tokenSymbol}</td>
+              <td>{data.totalSupply}</td>
+              <td>{data.details}</td>
             </tr>
           {/each}
         </tbody>
       </table>
-  </div>
-  </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {/if}
+  </main>
+</div>
 
-        <!-- Dashboard Widgets -->
-        <div class="bg-white p-4 shadow rounded-lg">
-          <h3 class="text-xl font-semibold mb-2">Widget 1</h3>
-          <p>Details about Widget 1</p>
-        </div>
-        <div class="bg-white p-4 shadow rounded-lg">
-          <h3 class="text-xl font-semibold mb-2">Widget 2</h3>
-          <p>Details about Widget 2</p>
-        </div>
-        <div class="bg-white p-4 shadow rounded-lg">
-          <h3 class="text-xl font-semibold mb-2">Widget 3</h3>
-          <p>Details about Widget 3</p>
-        </div>
-      </div>
-  
+<style>
+  .dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f7f9;
+  }
+
+  .sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e4e7eb;
+  }
+
+  .sidebar-nav {
+    flex-grow: 1;
+  }
+
+  .nav-item {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+
+  .nav-item:hover {
+    background-color: #f1f3f5;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 2rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+
+  .loading-message {
+    color: #007bff;
+  }
+
+  .error-message {
+    color: #dc3545;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .data-table thead {
+    background-color: #f8f9fa;
+    color: #495057;
+    text-transform: uppercase;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+
+  .data-table tbody tr {
+    border-bottom: 1px solid #e4e7eb;
+  }
+
+  .data-table tbody tr:hover {
+    background-color: #f1f3f5;
+  }
+</style>
