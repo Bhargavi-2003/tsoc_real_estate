@@ -75,7 +75,7 @@
     onMount(fetchTokens);
 </script>
 
-<div class="p-8">
+<!-- <div class="p-8">
     <h1 class="text-2xl font-semibold mb-4">Manage Tokens</h1>
 
     {#if error}
@@ -147,4 +147,83 @@
     >
         View Transactions
     </button>
+</div> -->
+<div class="flex justify-center items-center min-h-screen bg-gray-100 p-8">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+        <h1 class="text-2xl font-semibold mb-6 text-center">Manage Tokens</h1>
+
+        {#if error}
+            <p class="text-red-600 mb-4">{error}</p>
+        {/if}
+
+        {#if successMessage}
+            <p class="text-green-600 mb-4">{successMessage}</p>
+        {/if}
+
+        <div class="flex flex-col space-y-4">
+            <div>
+                <label for="tokenSelect" class="block text-lg font-medium mb-2">Select Token</label>
+                <select id="tokenSelect" bind:value={selectedTokenId} class="border border-gray-300 p-3 rounded-md w-full">
+                    <option value="">Select a token</option>
+                    {#each tokens as token}
+                        <option value={token.tokenId}>
+                            {token.tokenName} ({token.tokenSymbol}) - {token.totalSupply} available
+                        </option>
+                    {/each}
+                </select>
+            </div>
+
+            <div>
+                <label for="recipientAddress" class="block text-lg font-medium mb-2">Recipient Address</label>
+                <input
+                    id="recipientAddress"
+                    type="text"
+                    bind:value={recipientAddress}
+                    placeholder="Enter recipient address"
+                    class="border border-gray-300 p-3 rounded-md w-full"
+                />
+            </div>
+
+            <div>
+                <label for="amount" class="block text-lg font-medium mb-2">Amount</label>
+                <input
+                    id="amount"
+                    type="number"
+                    min="1"
+                    bind:value={amount}
+                    placeholder="Enter amount"
+                    class="border border-gray-300 p-3 rounded-md w-full"
+                />
+            </div>
+
+            <div>
+                <label for="senderAddress" class="block text-lg font-medium mb-2">Sender Address</label>
+                <input
+                    id="senderAddress"
+                    type="text"
+                    bind:value={senderAddress}
+                    placeholder="Enter sender address"
+                    class="border border-gray-300 p-3 rounded-md w-full"
+                />
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <button
+                on:click={distributeToken}
+                class="bg-blue-500 text-white p-3 rounded-md w-full hover:bg-blue-600"
+                disabled={isDistributing}
+            >
+                {#if isDistributing} Distributing... {/if}
+                {#if !isDistributing} Distribute Tokens {/if}
+            </button>
+
+            <button
+                on:click={viewTransactions}
+                class="bg-green-500 text-white p-3 rounded-md w-full hover:bg-green-600 mt-4"
+            >
+                View Transactions
+            </button>
+        </div>
+    </div>
 </div>
