@@ -14,21 +14,21 @@
         </p>
         
         <img src="src/oip.jpeg" alt="Blockchain Real Estate" class="mx-auto w-1/3 rounded-lg shadow-md mb-8">
-        <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div class="flex flex-col items-center bg-gray-100 p-6 rounded-lg shadow-md dark:bg-gray-800">
                 <img class="w-24 h-24 mb-3 rounded-full shadow-lg" src="https://via.placeholder.com/150" alt="Bhargavi">
                 <h2 class="mb-1 text-xl font-bold text-gray-900 dark:text-white">Bhargavi</h2>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Lead Developer</p>
             </div>
-            <div class="flex flex-col items-center bg-gray-100 p-6 rounded-lg shadow-md dark:bg-gray-800">
+            <!-- <div class="flex flex-col items-center bg-gray-100 p-6 rounded-lg shadow-md dark:bg-gray-800">
                 <img class="w-24 h-24 mb-3 rounded-full shadow-lg" src="https://via.placeholder.com/150" alt="Mayank">
                 <h2 class="mb-1 text-xl font-bold text-gray-900 dark:text-white">Mayank</h2>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Backend Specialist</p>
-            </div>
+            </div> -->
             <div class="flex flex-col items-center bg-gray-100 p-6 rounded-lg shadow-md dark:bg-gray-800">
                 <img class="w-24 h-24 mb-3 rounded-full shadow-lg" src="https://via.placeholder.com/150" alt="Ketan">
                 <h2 class="mb-1 text-xl font-bold text-gray-900 dark:text-white">Ketan</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Frontend Developer</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Lead Developer</p>
             </div>
         </div>
     </div>
