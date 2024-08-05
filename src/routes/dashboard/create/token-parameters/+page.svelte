@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import { tokenParameters } from "$lib/stores/projectstore";
 
+
   let tokenName = "";
   let tokenSymbol = "";
   let totalSupply = ""; // This is initially a string

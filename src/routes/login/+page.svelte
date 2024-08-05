@@ -1,7 +1,8 @@
-<script>
-  import { onMount } from 'svelte';
-  import '@fortawesome/fontawesome-free/css/all.min.css';
-  import "./style.css"
+<script lang="ts">
+  import { onMount } from "svelte";
+  import "@fortawesome/fontawesome-free/css/all.min.css";
+  import "./style.css";
+  import { success, failure } from "$lib/toast"; // Import toast functions
 
   let email = "";
   let password = "";
@@ -17,43 +18,56 @@
   };
 
   async function login() {
-    const res = await fetch("http://localhost:3000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (res.ok) {
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
-      // Redirect to dashboard
-      window.location.href = "/dashboard";
-    } else {
-      alert("Login failed");
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem("token", data.token);
+        success("Login successful");
+        // Redirect to dashboard
+        window.location.href = "/dashboard";
+      } else {
+        const error = await res.json();
+        failure(`Login failed: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      failure("Login failed: An unexpected error occurred.");
     }
   }
 
   async function signup() {
-    const res = await fetch("http://localhost:3000/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, name }), // include name
+      });
 
-    if (res.ok) {
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
-      // Redirect to dashboard
-      window.location.href = "/dashboard";
-    } else {
-      alert("Signup failed");
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem("token", data.token);
+        success("Signup successful");
+        // Redirect to dashboard
+        window.location.href = "/dashboard";
+      } else {
+        const error = await res.json();
+        failure(`Signup failed: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      failure("Signup failed: An unexpected error occurred.");
     }
   }
 </script>
 
-
-<main class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-900 ">
-  <div class={`container ${isSignUpActive ? 'right-panel-active' : ''}`} id="container">
+<main class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-900">
+  <div class={`container ${isSignUpActive ? "right-panel-active" : ""}`} id="container">
     <div class="form-container sign-up-container">
       <form on:submit|preventDefault={signup} class="space-y-6 form-auth">
         <h1 class="h-auth">Create Account</h1>
@@ -66,8 +80,8 @@
         <input class="input-auth" type="text" bind:value={name} placeholder="Name" required />
         <input class="input-auth" type="email" bind:value={email} placeholder="Email" required />
         <input class="input-auth" type="password" bind:value={password} placeholder="Password" required />
-        <br>
-        <button type="submit" class='sign-btn b-auth'>Sign Up</button>
+        <br />
+        <button type="submit" class="sign-btn b-auth">Sign Up</button>
       </form>
     </div>
     <div class="form-container sign-in-container">
@@ -82,7 +96,7 @@
         <input class="input-auth" type="email" bind:value={email} placeholder="Email" required />
         <input class="input-auth" type="password" bind:value={password} placeholder="Password" required />
         <a href="#">Forgot your password?</a>
-        <button type="submit" class='sign-btn b-auth'>Sign In</button>
+        <button type="submit" class="sign-btn b-auth">Sign In</button>
       </form>
     </div>
     <div class="overlay-container">
@@ -101,3 +115,7 @@
     </div>
   </div>
 </main>
+
+<style>
+  /* Styles go here */
+</style>

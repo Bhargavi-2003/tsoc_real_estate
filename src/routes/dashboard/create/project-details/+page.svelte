@@ -1,6 +1,8 @@
 <script>
   import { goto } from "$app/navigation";
   import { projectDetails } from "$lib/stores/projectstore";
+  import { success, failure } from '$lib/toast';
+
   // Replace with the actual builder ID if necessary
   const builderId = 1;
 
@@ -28,14 +30,18 @@
       }
 
       projectDetails.set({ projectName, projectDescription, projectLocation });
+      // Show success toast message
+      success("Project details submitted successfully!");
       // Navigate to the next page after a successful submission
       goto("/dashboard/create/token-parameters");
     } catch (error) {
       console.error("Error submitting project details:", error);
-      // Handle error (e.g., show an error message to the user)
+      // Show error toast message
+      failure("Error submitting project details. Please try again.");
     }
   }
 </script>
+
 
 <div
   class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"

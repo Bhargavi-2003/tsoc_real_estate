@@ -7,6 +7,7 @@
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
   import axios from "axios";
+  import { success, warning, failure } from "$lib/toast";
 
   // Define the types for the data
   interface ProjectData {
@@ -65,7 +66,7 @@
         },
       );
 
-      console.log("Token created successfully:", response.data);
+      success("Token created successfully");
 
       confirmedDataList.update((list) => [
         ...list,
@@ -76,7 +77,7 @@
       // Optionally navigate or provide user feedback
     } catch (error) {
       console.error("Error creating token:", error);
-      // Handle error (e.g., show an error message to the user)
+      failure("Error creating token");
     }
   }
 </script>
