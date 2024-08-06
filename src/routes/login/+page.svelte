@@ -23,11 +23,10 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
+        credentials: 'include', // Important for sending and receiving cookies
       });
 
       if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("token", data.token);
         success("Login successful");
         // Redirect to dashboard
         window.location.href = "/dashboard";
@@ -47,11 +46,10 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, name }), // include name
+        credentials: 'include', // Important for sending and receiving cookies
       });
 
       if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("token", data.token);
         success("Signup successful");
         // Redirect to dashboard
         window.location.href = "/dashboard";

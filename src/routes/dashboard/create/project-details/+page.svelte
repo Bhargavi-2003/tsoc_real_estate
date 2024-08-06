@@ -3,9 +3,6 @@
   import { projectDetails } from "$lib/stores/projectstore";
   import { success, failure } from '$lib/toast';
 
-  // Replace with the actual builder ID if necessary
-  const builderId = 1;
-
   let projectName = "";
   let projectDescription = "";
   let projectLocation = "";
@@ -17,8 +14,8 @@
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: 'include', // Ensure cookies are included
         body: JSON.stringify({
-          builderId,
           projectName,
           description: projectDescription,
           location: projectLocation,
@@ -26,26 +23,26 @@
       });
 
       if (!response.ok) {
-        throw new Error("Failed to submit project details");
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Failed to submit project details");
       }
 
-      projectDetails.set({ projectName, projectDescription, projectLocation });
-      // Show success toast message
+      const { projectId } = await response.json(); // Retrieve the projectId from response
+
+      // Store project details including projectId in the store
+      projectDetails.set({ projectName, projectDescription, projectLocation, projectId });
       success("Project details submitted successfully!");
-      // Navigate to the next page after a successful submission
       goto("/dashboard/create/token-parameters");
     } catch (error) {
       console.error("Error submitting project details:", error);
-      // Show error toast message
-      failure("Error submitting project details. Please try again.");
+      failure(`Error submitting project details: ${error.message}`);
     }
   }
 </script>
 
 
-<div
-  class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
->
+
+<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
   <div class="container">
     <h1 class="text-2xl font-bold mb-6 text-center text-gray-900">
       Enter Project Details
@@ -62,8 +59,7 @@
         />
       </div>
       <div>
-        <label for="projectDescription" class="label">Project Description</label
-        >
+        <label for="projectDescription" class="label">Project Description</label>
         <textarea
           id="projectDescription"
           bind:value={projectDescription}

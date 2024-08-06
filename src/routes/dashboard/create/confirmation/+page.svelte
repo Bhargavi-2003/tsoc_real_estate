@@ -1,19 +1,15 @@
 <script lang="ts">
-  import {
-    projectDetails,
-    tokenParameters,
-    confirmedDataList,
-  } from "$lib/stores/projectstore";
+  import { projectDetails, tokenParameters, confirmedDataList } from "$lib/stores/projectstore";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
   import axios from "axios";
   import { success, warning, failure } from "$lib/toast";
 
-  // Define the types for the data
   interface ProjectData {
     projectName: string;
     projectDescription: string;
     projectLocation: string;
+    projectId: number; // Include projectId in the interface
   }
 
   interface TokenData {
@@ -29,6 +25,7 @@
     projectName: "",
     projectDescription: "",
     projectLocation: "",
+    projectId: 0, // Default value
   };
 
   let tokenData: TokenData = {
@@ -54,16 +51,20 @@
 
   async function confirmTokenCreation() {
     try {
+      if (projectData.projectId <= 0) {
+        throw new Error('Invalid project ID');
+      }
+
       const response = await axios.post(
         "http://localhost:3000/api/token/define",
         {
-          builderId: 1, // Replace with actual builderId
-          projectId: 1, // Replace with actual projectId
+          projectId: projectData.projectId, // Ensure this is the valid project ID
           tokenName: tokenData.tokenName,
           tokenSymbol: tokenData.tokenSymbol,
-          totalSupply: tokenData.totalSupply, // Ensure this is a number
+          totalSupply: tokenData.totalSupply,
           additionalFeatures: tokenData.additionalFeatures,
         },
+        { withCredentials: true }
       );
 
       success("Token created successfully");
@@ -74,17 +75,21 @@
       ]);
 
       goto("/dashboard");
-      // Optionally navigate or provide user feedback
     } catch (error) {
-      console.error("Error creating token:", error);
-      failure("Error creating token");
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Error creating token:", error.response.data);
+        failure(`Error creating token: ${error.response.data.message}`);
+      } else {
+        console.error("Error creating token:", error);
+        failure("Error creating token");
+      }
     }
   }
 </script>
 
-<div
-  class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
->
+
+
+<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
   <div class="container">
     <h1 class="text-3xl font-bold mb-6 text-center text-gray-900">
       Confirm Token Creation
@@ -95,10 +100,7 @@
     <div class="details-card">
       <h2>Project Details</h2>
       <p><strong>Project Name:</strong> {projectData.projectName}</p>
-      <p>
-        <strong>Project Description:</strong>
-        {projectData.projectDescription}
-      </p>
+      <p><strong>Project Description:</strong> {projectData.projectDescription}</p>
       <p><strong>Project Location:</strong> {projectData.projectLocation}</p>
     </div>
     <div class="details-card">
@@ -106,14 +108,9 @@
       <p><strong>Token Name:</strong> {tokenData.tokenName}</p>
       <p><strong>Token Symbol:</strong> {tokenData.tokenSymbol}</p>
       <p><strong>Total Supply:</strong> {tokenData.totalSupply}</p>
-      <p>
-        <strong>Additional Features:</strong>
-        {tokenData.additionalFeatures}
-      </p>
+      <p><strong>Additional Features:</strong> {tokenData.additionalFeatures}</p>
     </div>
-    <button on:click={confirmTokenCreation} class="confirm-button"
-      >Create Token</button
-    >
+    <button on:click={confirmTokenCreation} class="confirm-button">Create Token</button>
   </div>
 </div>
 
