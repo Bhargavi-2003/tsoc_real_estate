@@ -13,7 +13,7 @@
             Transform your real estate assets into digital tokens with ease.
         </p>
         
-        <img src="src/OIP.jpeg" alt="Blockchain Real Estate" class="mx-auto w-1/3 rounded-lg shadow-md mb-8">
+        <!-- <img src="src/OIP.jpeg" alt="Blockchain Real Estate" class="mx-auto w-1/3 rounded-lg shadow-md mb-8"> -->
         <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div class="flex flex-col items-center bg-gray-100 p-6 rounded-lg shadow-md dark:bg-gray-800">
                 <img class="w-24 h-24 mb-3 rounded-full shadow-lg" src="https://via.placeholder.com/150" alt="Bhargavi">
