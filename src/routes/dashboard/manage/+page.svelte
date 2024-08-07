@@ -25,7 +25,7 @@
     async function fetchTokens() {
         try {
             const response = await axios.get(
-                "http://localhost:3000/api/token/manage",
+                "https://tsoc-real-estate-backend.vercel.app/api/token/manage",
                 {
                     withCredentials: true, // Include credentials for cookie-based authentication
                 },
@@ -53,7 +53,7 @@
         isDistributing = true;
         try {
             const response = await axios.post(
-                "http://localhost:3000/api/token/distribute",
+                "https://tsoc-real-estate-backend.vercel.app/api/token/distribute",
                 {
                     tokenId: selectedTokenId,
                     recipientAddress,

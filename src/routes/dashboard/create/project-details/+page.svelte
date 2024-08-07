@@ -9,7 +9,7 @@
 
   async function submitProjectDetails() {
     try {
-      const response = await fetch("http://localhost:3000/api/project/create", {
+      const response = await fetch("https://tsoc-real-estate-backend.vercel.app/api/project/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

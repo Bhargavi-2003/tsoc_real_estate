@@ -7,7 +7,7 @@
 
   async function checkAuthStatus() {
     try {
-      const response = await axios.get('http://localhost:3000/api/auth/check-auth', {
+      const response = await axios.get('https://tsoc-real-estate-backend.vercel.app/api/auth/check-auth', {
         withCredentials: true,
       });
       isLoggedIn = response.status === 200;
@@ -18,7 +18,7 @@
 
   async function logout() {
     try {
-      await axios.post('http://localhost:3000/api/user/logout', {}, { withCredentials: true });
+      await axios.post('https://tsoc-real-estate-backend.vercel.app/api/user/logout', {}, { withCredentials: true });
       isLoggedIn = false; // Ensure state is updated
       goto('/login'); // Redirect to the login page
     } catch (err) {

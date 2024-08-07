@@ -28,7 +28,7 @@
 
   async function fetchProjectDetails(): Promise<ProjectData[]> {
     try {
-      const response = await axios.get("http://localhost:3000/api/project", {
+      const response = await axios.get("https://tsoc-real-estate-backend.vercel.app/api/project", {
         withCredentials: true, // Ensure cookies are included in the request
       });
       return response.data;
@@ -45,7 +45,7 @@
 
   async function fetchTokenDetails(): Promise<TokenData[]> {
     try {
-      const response = await axios.get("http://localhost:3000/api/token/manage", {
+      const response = await axios.get("https://tsoc-real-estate-backend.vercel.app/api/token/manage", {
         withCredentials: true, // Ensure cookies are included in the request
       });
       return response.data.tokens;

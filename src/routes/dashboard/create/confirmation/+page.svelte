@@ -56,7 +56,7 @@
       }
 
       const response = await axios.post(
-        "http://localhost:3000/api/token/define",
+        "https://tsoc-real-estate-backend.vercel.app/api/token/define",
         {
           projectId: projectData.projectId, // Ensure this is the valid project ID
           tokenName: tokenData.tokenName,
