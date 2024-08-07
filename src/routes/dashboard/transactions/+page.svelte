@@ -19,7 +19,7 @@
     async function fetchTransactions(builderId: number, tokenId: number) {
         try {
             const response = await axios.get(
-                "http://localhost:3000/api/token/transactions",
+                "https://tsoc-real-estate-backend.vercel.app/api/token/transactions",
                 {
                     params: { builderId, tokenId },
                 },
