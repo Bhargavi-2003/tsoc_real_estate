@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import axios from "axios";
+  import { success, warning, failure } from "$lib/toast"; // Import custom toast notifications
 
   interface ProjectData {
     id: number;
@@ -28,24 +29,34 @@
   async function fetchProjectDetails(): Promise<ProjectData[]> {
     try {
       const response = await axios.get("http://localhost:3000/api/project", {
-        params: { builderId: 1 },
+        withCredentials: true, // Ensure cookies are included in the request
       });
       return response.data;
-    } catch (error) {
-      console.error("Error fetching project details:", error);
-      throw error;
+    } catch (err) {
+      console.error("Error fetching project details:", err);
+      if (axios.isAxiosError(err) && err.response) {
+        failure(err.response.data.message || "Error fetching project details");
+      } else {
+        failure("Error fetching project details");
+      }
+      throw err;
     }
   }
 
   async function fetchTokenDetails(): Promise<TokenData[]> {
     try {
       const response = await axios.get("http://localhost:3000/api/token/manage", {
-        params: { builderId: 1 },
+        withCredentials: true, // Ensure cookies are included in the request
       });
       return response.data.tokens;
-    } catch (error) {
-      console.error("Error fetching token details:", error);
-      throw error;
+    } catch (err) {
+      console.error("Error fetching token details:", err);
+      if (axios.isAxiosError(err) && err.response) {
+        failure(err.response.data.message || "Error fetching token details");
+      } else {
+        failure("Error fetching token details");
+      }
+      throw err;
     }
   }
 
@@ -57,11 +68,12 @@
         fetchTokenDetails(),
       ]);
 
+      // Ensure that tokens array is of the same length as projectDetails
       confirmedTokens = projectDetails.map((project, index: number) => ({
         ...project,
         ...(tokenDetails[index] || {}),
       }));
-    } catch (error) {
+    } catch (err) {
       error = "Failed to load data";
     } finally {
       loading = false;
@@ -103,7 +115,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each confirmedTokens as data (data.tokenId)}
+          {#each confirmedTokens as data, index (data.tokenId || index)}
             <tr>
               <td>{data.name}</td>
               <td>{data.description}</td>

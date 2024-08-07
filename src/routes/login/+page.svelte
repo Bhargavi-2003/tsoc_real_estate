@@ -6,7 +6,6 @@
 
   let email = "";
   let password = "";
-  let name = "";
   let isSignUpActive = false;
 
   const handleSignUpClick = () => {
@@ -45,14 +44,14 @@
       const res = await fetch("http://localhost:3000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }), // include name
+        body: JSON.stringify({ email, password}),
         credentials: 'include', // Important for sending and receiving cookies
       });
 
       if (res.ok) {
         success("Signup successful");
-        // Redirect to dashboard
-        window.location.href = "/dashboard";
+        // Redirect to login
+        window.location.href = "/login";
       } else {
         const error = await res.json();
         failure(`Signup failed: ${error.message}`);
@@ -75,7 +74,6 @@
           <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
         </div>
         <span class="span-auth">or use your email for registration</span>
-        <input class="input-auth" type="text" bind:value={name} placeholder="Name" required />
         <input class="input-auth" type="email" bind:value={email} placeholder="Email" required />
         <input class="input-auth" type="password" bind:value={password} placeholder="Password" required />
         <br />
